@@ -11,12 +11,44 @@ occurs, this program doesn't depend on any cryptographic libraries. It's
 a simple, single-threaded, standalone C program. It uses `poll()` to
 trap multiple clients at a time.
 
+## Quick Usage 
+
+Change the default ssh port before doing this and restart the real ssh service to run on another port!
+
+```
+sudo nano /etc/ssh/sshd_config
+# Change Port 22 to something else within valid range
+sudo systemctl restart sshd.service
+# for debian / ubuntu distros
+sudo apt install git -y 
+# for arch distros
+sudo pacman -S git
+git clone https://github.com/skeeto/endlessh.git
+cd endlessh
+```
+### Docker
+
+```
+sudo docker build .
+sudo docker run -d --restart=always -p 22:2222 endlessh
+```
+
+### without Docker
+
+```
+sudo make install
+sudo crontab -e
+# insert:
+@reboot sudo endlessh -p 22
+# safe the file && sudo reboot
+```
+
 ## Usage
 
 Usage information is printed with `-h`.
 
 ```
-Usage: endlessh [-vhs] [-d MS] [-f CONFIG] [-l LEN] [-m LIMIT] [-p PORT]
+Usage: endlessh [-vVhs] [-46] [-d MS] [-f CONFIG] [-l LEN] [-m LIMIT] [-p PORT] [-S MIN]
   -4        Bind to IPv4 only
   -6        Bind to IPv6 only
   -d INT    Message millisecond delay [10000]
@@ -26,7 +58,9 @@ Usage: endlessh [-vhs] [-d MS] [-f CONFIG] [-l LEN] [-m LIMIT] [-p PORT]
   -m INT    Maximum number of clients [4096]
   -p INT    Listening port [2222]
   -s        Print diagnostics to syslog instead of standard output
+  -S INT    Statistics minute interval [60]
   -v        Print diagnostics (repeatable)
+  -V        Print version information and exit
 ```
 
 Argument order matters. The configuration file is loaded when the `-f`
@@ -112,22 +146,6 @@ need to use `-D__EXTENSIONS__` in `CFLAGS`.
 
 The man page needs to go into a different path for OpenBSD's `man` command:
 
-```
-diff --git a/Makefile b/Makefile
-index 119347a..dedf69d 100644
---- a/Makefile
-+++ b/Makefile
-@@ -14,8 +14,8 @@ endlessh: endlessh.c
- install: endlessh
-        install -d $(DESTDIR)$(PREFIX)/bin
-        install -m 755 endlessh $(DESTDIR)$(PREFIX)/bin/
--       install -d $(DESTDIR)$(PREFIX)/share/man/man1
--       install -m 644 endlessh.1 $(DESTDIR)$(PREFIX)/share/man/man1/
-+       install -d $(DESTDIR)$(PREFIX)/man/man1
-+       install -m 644 endlessh.1 $(DESTDIR)$(PREFIX)/man/man1/
-
- clean:
-        rm -rf endlessh
-```
+    make MANDIR=/usr/local/man install
 
 [np]: https://nullprogram.com/blog/2019/03/22/
