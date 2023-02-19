@@ -586,7 +586,7 @@ usage(FILE *f)
     fprintf(f, "  -f        Set and load config file ["
             DEFAULT_CONFIG_FILE "]\n");
     fprintf(f, "  -h        Print this help message and exit\n");
-    fprintf(f, "  -l INT    Maximum banner line length (3-255) ["
+    fprintf(f, "  -l INT    Maximum banner line length (3-4096) ["
             XSTR(DEFAULT_MAX_LINE_LENGTH) "]\n");
     fprintf(f, "  -m INT    Maximum number of clients ["
             XSTR(DEFAULT_MAX_CLIENTS) "]\n");
